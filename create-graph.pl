@@ -48,6 +48,6 @@ for my $p (@dobles_pasos) {
 
 for my $k (keys %pesos ) {
   for my $kk (keys %{$pesos{$k}}) {
-    say "$k $kk $pesos{$k}{$kk}";
+    say "$k $kk";
   }
 }
