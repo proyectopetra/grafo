@@ -24,13 +24,30 @@ for my $p (@passes[1..$#passes]) {
     $devices{$id_dispositivo}{$id_nodo}++;
 }
 
+my $indice = 0;
+my %indices;
+for my $n (keys %nodes) {
+  $indices{$n} = $indice++;
+}
+
 my @dobles_pasos = grep( (keys %{$devices{$_}}) > 1, keys %devices );
 
+my %pesos;
 for my $p (@dobles_pasos) {
   my @nodes = keys %{$devices{$p}};
   for ( my $i = 0; $i <= $#nodes; $i++ ) {
     for ( my $j = $i+1; $j <= $#nodes; $j++ ) {
-      say "$nodes[$i] $nodes[$j]";
+      if ( $nodes[$i] < $nodes[$j] ) {
+	$pesos{$indices{$nodes[$i]}}{$indices{$nodes[$j]}}++;
+      } else {
+	$pesos{$indices{$nodes[$j]}}{$indices{$nodes[$i]}}++;
+      }
     }
+  }
+}
+
+for my $k (keys %pesos ) {
+  for my $kk (keys %{$pesos{$k}}) {
+    say "$k $kk $pesos{$k}{$kk}";
   }
 }
