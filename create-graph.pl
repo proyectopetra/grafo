@@ -30,7 +30,7 @@ for my $p (@dobles_pasos) {
   my @nodes = keys %{$devices{$p}};
   for ( my $i = 0; $i <= $#nodes; $i++ ) {
     for ( my $j = $i+1; $j <= $#nodes; $j++ ) {
-      say "$nodes[$i],$nodes[$j]";
+      say "$nodes[$i] $nodes[$j]";
     }
   }
 }
