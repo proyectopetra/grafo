@@ -6,13 +6,14 @@ use warnings;
 use v5.14;
 
 use File::Slurp::Tiny qw(read_lines);
+use Graph::Easy;
 
 my $file_name = shift || "../Datasets2014/raw_ampliado.csv";
 
 my @passes = read_lines( $file_name );
 
 if (!@passes) {
-    die "Algo no va";
+    die "Algo no va\n";
 }
 
 my (%nodes,%devices);
@@ -24,6 +25,7 @@ for my $p (@passes[1..$#passes]) {
     $devices{$id_dispositivo}{$id_nodo}++;
 }
 
+
 my $indice = 0;
 my %indices;
 for my $n (keys %nodes) {
@@ -31,23 +33,16 @@ for my $n (keys %nodes) {
 }
 
 my @dobles_pasos = grep( (keys %{$devices{$_}}) > 1, keys %devices );
+my $graph = Graph::Easy->new();
 
 my %pesos;
 for my $p (@dobles_pasos) {
   my @nodes = keys %{$devices{$p}};
   for ( my $i = 0; $i <= $#nodes; $i++ ) {
     for ( my $j = $i+1; $j <= $#nodes; $j++ ) {
-      if ( $nodes[$i] < $nodes[$j] ) {
-	$pesos{$indices{$nodes[$i]}}{$indices{$nodes[$j]}}++;
-      } else {
-	$pesos{$indices{$nodes[$j]}}{$indices{$nodes[$i]}}++;
-      }
+	$graph->add_edge_once( $nodes[$i], $nodes[$j] );
     }
   }
 }
 
-for my $k (keys %pesos ) {
-  for my $kk (keys %{$pesos{$k}}) {
-    say "$k $kk";
-  }
-}
+say $graph->as_graphml();
