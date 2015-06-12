@@ -9,7 +9,7 @@ use File::Slurp::Tiny qw(read_lines);
 
 my $traffic_data_name = shift || "../Datasets2014/raw_ampliado.csv";
 my $node_data_name = shift || "../Datasets2014/nodos_info.csv";
-my $min_weight = shift || 10; # Mínimo peso para considerar "real" el dato.
+my $min_weight = shift || 9; # Mínimo peso para considerar "real" el dato.
 
 my $output =<<EOC;
 library(igraph)
