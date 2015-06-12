@@ -7,14 +7,23 @@ use v5.14;
 
 use File::Slurp::Tiny qw(read_lines);
 
-my $file_name = shift || "../Datasets2014/raw_ampliado.csv";
+my $traffic_data_name = shift || "../Datasets2014/raw_ampliado.csv";
+my $node_data_name = shift || "../Datasets2014/nodos_info.csv";
+
 
 my $output =<<EOC;
 library(igraph)
 traffic.graph <- graph.empty(n=0)
 EOC
 
-my @passes = read_lines( $file_name );
+my @nodes_info = read_lines( $node_data_name );
+my %nodes_info;
+for my $i ( @nodes_info ) {
+  my ($ID,$foo,$bar,$name) = split(",",$i);
+  $nodes_info{$ID}=$name;
+}
+
+my @passes = read_lines( $traffic_data_name );
 
 if (!@passes) {
     die "Algo no va\n";
@@ -30,7 +39,7 @@ for my $p (@passes[1..$#passes]) {
 }
 
 for my $n (keys %nodes) {
-    $output .= "\ntraffic.graph <- traffic.graph + vertex(\"$n\")";
+  $output .= "\ntraffic.graph <- traffic.graph + vertex($nodes_info{$n})";
 }
 
 my @dobles_pasos = grep( (keys %{$devices{$_}}) > 1, keys %devices );
@@ -51,7 +60,7 @@ for my $p (@dobles_pasos) {
 
 for my $k (keys %pesos ) {
   for my $kk (keys %{$pesos{$k}}) {
-      $output .= "\ntraffic.graph <- traffic.graph + edge(\"$k\",\"$kk\",weight=$pesos{$k}{$kk})"
+      $output .= "\ntraffic.graph <- traffic.graph + edge($nodes_info{$k},$nodes_info{$kk},weight=$pesos{$k}{$kk})"
   }
 }
 
