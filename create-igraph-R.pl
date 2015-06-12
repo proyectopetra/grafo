@@ -9,7 +9,7 @@ use File::Slurp::Tiny qw(read_lines);
 
 my $traffic_data_name = shift || "../Datasets2014/raw_ampliado.csv";
 my $node_data_name = shift || "../Datasets2014/nodos_info.csv";
-
+my $min_weight = shift || 10; # Mínimo peso para considerar "real" el dato.
 
 my $output =<<EOC;
 library(igraph)
@@ -60,7 +60,9 @@ for my $p (@dobles_pasos) {
 
 for my $k (keys %pesos ) {
   for my $kk (keys %{$pesos{$k}}) {
-      $output .= "\ntraffic.graph <- traffic.graph + edge($nodes_info{$k},$nodes_info{$kk},weight=$pesos{$k}{$kk})"
+      if ( $pesos{$k}{$kk} > $min_weight ) {
+	  $output .= "\ntraffic.graph <- traffic.graph + edge($nodes_info{$k},$nodes_info{$kk},weight=$pesos{$k}{$kk})"
+      }
   }
 }
 
